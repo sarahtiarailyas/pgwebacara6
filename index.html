@@ -317,7 +317,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Florest Timur</a>
+            <a class="navbar-brand" href="#">Flores Timur</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -651,7 +651,7 @@
                 });
             },
         });
-        $.getJSON("GeoJson/jml_penduduk.geojson", function (data) {
+        $.getJSON("geojson/jml_penduduk.geojson", function (data) {
             jumlah_penduduk.addData(data); // Menambahkan data ke dalam GeoJSON Polygon Jumlah Penduduk
             map.addLayer(jumlah_penduduk); // Menambahkan GeoJSON Polygon Jumlah Penduduk ke dalam peta
         });

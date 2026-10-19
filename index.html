@@ -895,7 +895,7 @@
             },
         });
 
-        $.getJSON("geojson/toponimi.geojson", function (data) {
+        $.getJSON("GeoJson/toponimi.geojson", function (data) {
             toponimi.addData(data);
             map.addLayer(toponimi);
         });
@@ -956,7 +956,7 @@
             },
         });
 
-        $.getJSON("geojson/jalan.geojson", function (data) {
+        $.getJSON("GeoJson/jalan.geojson", function (data) {
             jalan.addData(data);
             map.addLayer(jalan);
         });
@@ -1022,7 +1022,7 @@
             },
         });
 
-        $.getJSON("geojson/jml_penduduk.geojson", function (data) {
+        $.getJSON("GeoJson/jml_penduduk.geojson", function (data) {
             jumlah_penduduk.addData(data);
             map.addLayer(jumlah_penduduk);
         });

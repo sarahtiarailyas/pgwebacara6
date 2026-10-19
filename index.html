@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leaflet JS</title>
+    <title>WebGIS Kabupaten Flores Timur</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -16,427 +16,767 @@
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css">
 
-    <!-- Google Fonts for Avengers Theme -->
+    <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <style>
+        :root {
+            --sky-50: #f0f9ff;
+            --sky-100: #e0f2fe;
+            --sky-200: #bae6fd;
+            --sky-300: #7dd3fc;
+            --sky-400: #38bdf8;
+            --sky-500: #0ea5e9;
+            --sky-600: #0284c7;
+            --sky-700: #0369a1;
+            --sky-800: #075985;
+            --sky-900: #0c4a6e;
+        }
+
         html,
-        body,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #1e293b;
+            background-color: #f8fafc;
+        }
+
         #map {
             width: 100%;
             height: calc(100vh - 56px);
             margin: 0;
         }
 
-        /* Avengers Theme Modal */
-        .avengers-modal {
-            background: radial-gradient(circle at 50% 0%, #1a103c 0%, #0a0e1a 70%, #05070e 100%);
-            border: 2px solid #00f0ff;
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.35), 0 0 60px rgba(226, 54, 54, 0.25), inset 0 0 20px rgba(0, 240, 255, 0.1);
-            border-radius: 16px;
-            color: #e2e8f0;
-            font-family: 'Rajdhani', sans-serif;
-            overflow: hidden;
-            position: relative;
+        /* Navbar Minimalist Sky Blue */
+        .navbar-sky {
+            background-color: #ffffff;
+            border-bottom: 1.5px solid var(--sky-200);
+            box-shadow: 0 2px 12px rgba(2, 132, 199, 0.08);
+            padding: 0.55rem 1.25rem;
         }
 
-        .avengers-modal::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #e23636, #00f0ff, #f59e0b, #e23636);
-            background-size: 200% 100%;
-            animation: avengersGradient 4s linear infinite;
+        .navbar-sky .navbar-brand {
+            font-weight: 700;
+            color: var(--sky-900);
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.12rem;
         }
 
-        @keyframes avengersGradient {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            100% {
-                background-position: 200% 50%;
-            }
+        .navbar-sky .navbar-brand:hover {
+            color: var(--sky-600);
         }
 
-        .avengers-header {
-            background: rgba(13, 17, 28, 0.85);
-            border-bottom: 1px solid rgba(0, 240, 255, 0.25);
-            padding: 1rem 1.25rem;
+        .navbar-sky .nav-link {
+            color: #475569;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.45rem 0.85rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .avengers-logo-glow {
-            width: 48px;
-            height: 48px;
-            flex-shrink: 0;
+        .navbar-sky .nav-link:hover {
+            color: var(--sky-700);
+            background-color: var(--sky-50);
         }
 
-        .avengers-icon {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.8));
+        .btn-nav-about {
+            background-color: var(--sky-50);
+            border: 1px solid var(--sky-200);
+            color: var(--sky-700) !important;
+            font-weight: 600 !important;
         }
 
-        .rotating-ring {
-            transform-origin: center;
-            animation: rotateRing 12s linear infinite;
+        .btn-nav-about:hover {
+            background-color: var(--sky-100) !important;
+            border-color: var(--sky-300) !important;
+            color: var(--sky-800) !important;
         }
 
-        @keyframes rotateRing {
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .avengers-title {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            letter-spacing: 2px;
-            color: #ffffff;
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 0 20px rgba(226, 54, 54, 0.6);
-            margin: 0;
-            font-size: 1.2rem;
-        }
-
-        .avengers-subtitle {
+        .badge-sky-sm {
+            background: var(--sky-100);
+            color: var(--sky-700);
             font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            color: #38bdf8;
+            font-weight: 700;
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            border: 1px solid var(--sky-200);
+            letter-spacing: 0.2px;
+        }
+
+        /* ========================================================
+           ABOUT MODAL - SKY BLUE THEME (SEDERHANA & MINIMALIS)
+           ======================================================== */
+        .sky-modal {
+            border-radius: 20px;
+            border: 1px solid var(--sky-200);
+            box-shadow: 0 20px 40px rgba(2, 132, 199, 0.16);
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+
+        .sky-modal-header {
+            background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+            color: #ffffff;
+            padding: 1.2rem 1.5rem;
+            border-bottom: none;
+        }
+
+        .sky-modal-title {
+            font-weight: 700;
+            font-size: 1.18rem;
+            letter-spacing: -0.2px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .sky-modal-subtitle {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.92);
+            font-weight: 400;
+            margin-top: 2px;
             display: block;
         }
 
-        .avengers-body {
+        .sky-modal-body {
             padding: 1.5rem;
-            background: radial-gradient(ellipse at center, rgba(14, 23, 42, 0.6) 0%, rgba(5, 7, 14, 0.9) 100%);
+            background-color: #ffffff;
         }
 
-        .badge-clearance {
-            background: rgba(226, 54, 54, 0.2);
-            border: 1px solid #e23636;
-            color: #ff6b6b;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 0.3rem 0.65rem;
-            border-radius: 6px;
-            letter-spacing: 1px;
-            box-shadow: 0 0 8px rgba(226, 54, 54, 0.3);
-        }
-
-        .badge-status {
-            background: rgba(0, 240, 255, 0.15);
-            border: 1px solid #00f0ff;
-            color: #38bdf8;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 0.3rem 0.65rem;
-            border-radius: 6px;
-            letter-spacing: 1px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
-        }
-
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #00f0ff;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #00f0ff;
-            animation: dotPulse 1.5s infinite;
-        }
-
-        @keyframes dotPulse {
-
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.4;
-                transform: scale(0.8);
-            }
-        }
-
-        .agent-card {
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            border-radius: 12px;
-            padding: 1.25rem;
-            backdrop-filter: blur(8px);
-            box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05);
-        }
-
-        .agent-avatar-wrap {
+        /* Profile Card */
+        .sky-profile-card {
+            background: var(--sky-50);
+            border: 1px solid var(--sky-200);
+            border-radius: 14px;
+            padding: 1.2rem 1.4rem;
+            margin-bottom: 1.2rem;
             display: flex;
-            flex-direction: column;
             align-items: center;
+            gap: 1.25rem;
         }
 
-        .arc-reactor-core {
-            width: 80px;
-            height: 80px;
+        .sky-avatar {
+            width: 68px;
+            height: 68px;
             border-radius: 50%;
-            border: 2px dashed #00f0ff;
-            background: radial-gradient(circle, rgba(0, 240, 255, 0.25) 0%, rgba(13, 20, 36, 0.9) 70%);
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            border: 2.5px solid var(--sky-300);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), inset 0 0 12px rgba(0, 240, 255, 0.3);
-            margin-bottom: 0.5rem;
+            color: var(--sky-600);
+            font-size: 2rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.18);
         }
 
-        .text-cyan {
-            color: #00f0ff !important;
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.8);
-        }
-
-        .agent-id-tag {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.7rem;
-            color: #94a3b8;
-            letter-spacing: 1px;
-        }
-
-        .agent-field {
-            margin-bottom: 0.85rem;
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
-            padding-bottom: 0.4rem;
-        }
-
-        .agent-field:last-child {
-            margin-bottom: 0;
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .field-label {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.68rem;
-            color: #94a3b8;
-            letter-spacing: 1.5px;
-            margin-bottom: 2px;
-        }
-
-        .field-value {
-            font-size: 1.12rem;
+        .sky-profile-name {
             font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--sky-900);
+            margin: 0 0 4px 0;
+            letter-spacing: -0.2px;
+        }
+
+        .sky-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            background: #ffffff;
+            color: var(--sky-700);
+            border: 1px solid var(--sky-200);
+            font-size: 0.76rem;
+            font-weight: 600;
+            padding: 0.2rem 0.65rem;
+            border-radius: 20px;
+        }
+
+        /* Info Grid */
+        .sky-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .sky-info-item {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.75rem 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .sky-info-item:hover {
+            border-color: var(--sky-300);
+            background-color: var(--sky-50);
+        }
+
+        .sky-info-item.full-width {
+            grid-column: span 2;
+        }
+
+        .sky-info-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .sky-info-value {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        /* Tech Pills */
+        .sky-tech-wrap {
+            background: #f8fafc;
+            border: 1px dashed var(--sky-200);
+            border-radius: 10px;
+            padding: 0.75rem 0.9rem;
+        }
+
+        .sky-tech-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .sky-pill {
+            background: #ffffff;
+            color: var(--sky-700);
+            border: 1px solid var(--sky-200);
+            font-size: 0.73rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+        }
+
+        .sky-modal-footer {
+            background: var(--sky-50);
+            border-top: 1px solid var(--sky-100);
+            padding: 0.85rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-sky-primary {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
             color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1.3rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
+        }
+
+        .btn-sky-primary:hover {
+            background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 14px rgba(2, 132, 199, 0.35);
+            transform: translateY(-1px);
+        }
+
+        /* Modal Penduduk Minimalist */
+        .sky-table {
+            margin: 0;
+            font-size: 0.88rem;
+        }
+
+        .sky-table th {
+            font-weight: 600;
+            color: #64748b;
+            padding: 0.65rem 0.85rem;
+            border-bottom: 1px solid var(--sky-100);
+            background-color: var(--sky-50);
+        }
+
+        .sky-table td {
+            padding: 0.65rem 0.85rem;
+            border-bottom: 1px solid var(--sky-100);
+            color: #1e293b;
+        }
+
+        .badge-sky-lg {
+            background: var(--sky-100);
+            color: var(--sky-800);
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            border: 1px solid var(--sky-200);
+            font-size: 0.85rem;
+        }
+
+        /* ========================================================
+           POPUP - SKY BLUE THEME (SEDERHANA & MINIMALIS)
+           ======================================================== */
+        .leaflet-popup-content-wrapper {
+            background: #ffffff !important;
+            border-radius: 14px !important;
+            border: 1.5px solid var(--sky-200) !important;
+            box-shadow: 0 12px 28px -6px rgba(2, 132, 199, 0.22), 0 4px 10px -2px rgba(2, 132, 199, 0.1) !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+        }
+
+        .leaflet-popup-content {
+            margin: 0 !important;
+            line-height: 1.4 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            min-width: 210px;
+        }
+
+        .leaflet-popup-tip-container {
+            margin-top: -1px;
+        }
+
+        .leaflet-popup-tip {
+            background: #ffffff !important;
+            box-shadow: none !important;
+            border: 1.5px solid var(--sky-200) !important;
+        }
+
+        .leaflet-popup-close-button {
+            color: #ffffff !important;
+            font-size: 16px !important;
+            padding: 6px !important;
+            top: 7px !important;
+            right: 8px !important;
+            z-index: 10;
+            transition: all 0.2s ease;
+        }
+
+        .leaflet-popup-close-button:hover {
+            color: #f0f9ff !important;
+            transform: scale(1.15);
+        }
+
+        .sky-popup-header {
+            background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+            color: #ffffff;
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 9px 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .sky-popup-body {
+            padding: 12px 14px;
+            background: #ffffff;
+        }
+
+        .sky-popup-title {
+            font-size: 0.96rem;
+            font-weight: 700;
+            color: var(--sky-900);
+            margin-bottom: 8px;
+            line-height: 1.25;
+        }
+
+        .sky-popup-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 0.82rem;
+            gap: 12px;
+        }
+
+        .sky-popup-row:last-of-type {
+            border-bottom: none;
+        }
+
+        .sky-popup-label {
+            color: #64748b;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .badge-sky {
+            background: var(--sky-100);
+            color: var(--sky-700);
+            font-weight: 600;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            border: 1px solid var(--sky-200);
+            white-space: nowrap;
+        }
+
+        .sky-popup-coord {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.74rem;
+            color: #334155;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .sky-popup-val-bold {
+            font-weight: 700;
+            color: var(--sky-700);
+        }
+
+        .sky-popup-img-wrap {
+            margin-top: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--sky-200);
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);
+        }
+
+        .sky-popup-img {
+            width: 100%;
+            max-width: 230px;
+            height: auto;
+            display: block;
+        }
+
+        /* ========================================================
+           TOOLTIP - SKY BLUE THEME (SEDERHANA & MINIMALIS)
+           ======================================================== */
+        .leaflet-tooltip {
+            background: rgba(255, 255, 255, 0.96) !important;
+            backdrop-filter: blur(8px);
+            border: 1.5px solid var(--sky-300) !important;
+            border-radius: 8px !important;
+            color: var(--sky-800) !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            font-size: 11.5px !important;
+            font-weight: 600 !important;
+            padding: 4px 10px !important;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.18) !important;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+        }
+
+        .leaflet-tooltip-top:before {
+            border-top-color: var(--sky-300) !important;
+        }
+
+        .leaflet-tooltip-bottom:before {
+            border-bottom-color: var(--sky-300) !important;
+        }
+
+        .leaflet-tooltip-left:before {
+            border-left-color: var(--sky-300) !important;
+        }
+
+        .leaflet-tooltip-right:before {
+            border-right-color: var(--sky-300) !important;
+        }
+
+        /* ========================================================
+           LEGENDA & LAYER CONTROL - SKY BLUE THEME (MINIMALIS)
+           ======================================================== */
+        .leaflet-control-layers {
+            background: rgba(255, 255, 255, 0.96) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--sky-200) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 10px 25px -4px rgba(2, 132, 199, 0.14), 0 4px 8px -2px rgba(2, 132, 199, 0.08) !important;
+            padding: 12px 14px !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            min-width: 235px;
+            max-width: 295px;
+        }
+
+        .leaflet-control-layers-separator {
+            border-top: 1px solid var(--sky-100) !important;
+            margin: 8px 0 !important;
+        }
+
+        .legend-header-bar {
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+            border-bottom: 1.5px solid var(--sky-100);
+        }
+
+        .text-sky-dark {
+            color: var(--sky-900);
+            font-size: 0.76rem;
             letter-spacing: 0.5px;
         }
 
-        .text-gold {
-            color: #fbbf24 !important;
-            text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
-        }
-
-        .division-tag {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #38bdf8;
-            margin-left: 4px;
-        }
-
-        .tech-hud {
-            background: rgba(10, 15, 26, 0.6);
-            border-radius: 8px;
-            padding: 0.6rem 0.85rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .text-muted-glow {
-            color: #94a3b8;
-            font-size: 0.72rem;
-            letter-spacing: 1px;
-        }
-
-        .hud-progress {
-            height: 3px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .hud-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #e23636, #00f0ff);
-            box-shadow: 0 0 8px #00f0ff;
-        }
-
-        .avengers-footer {
-            background: rgba(13, 17, 28, 0.85);
-            border-top: 1px solid rgba(0, 240, 255, 0.25);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 1.25rem;
-        }
-
-        .footer-note {
-            font-family: 'Orbitron', sans-serif;
+        .legend-badge-count {
+            background: var(--sky-100);
+            color: var(--sky-700);
             font-size: 0.68rem;
-            color: #64748b;
-            letter-spacing: 1px;
-        }
-
-        .btn-avengers-close {
-            background: linear-gradient(135deg, #b91c1c 0%, #e23636 100%);
-            border: 1px solid #ff4d4d;
-            color: #ffffff;
-            font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            font-size: 0.78rem;
-            letter-spacing: 1.5px;
-            padding: 0.45rem 1rem;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 12px rgba(226, 54, 54, 0.4);
+            padding: 0.15rem 0.45rem;
+            border-radius: 12px;
         }
 
-        .btn-avengers-close:hover {
-            background: linear-gradient(135deg, #dc2626 0%, #ff5252 100%);
-            color: #ffffff;
-            box-shadow: 0 0 20px rgba(226, 54, 54, 0.7);
-            transform: translateY(-1px);
+        .leaflet-control-layers label {
+            margin-bottom: 4px;
+            font-size: 0.83rem;
+            color: #334155;
+            cursor: pointer;
+        }
+
+        .leaflet-control-layers input[type="checkbox"],
+        .leaflet-control-layers input[type="radio"] {
+            accent-color: var(--sky-600);
+            cursor: pointer;
+            width: 15px;
+            height: 15px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .legend-title-item {
+            font-weight: 700;
+            color: var(--sky-900);
+            display: inline;
+        }
+
+        .legend-sublist {
+            margin-left: 21px;
+            margin-top: 4px;
+            margin-bottom: 6px;
+            font-size: 0.78rem;
+            color: #475569;
+        }
+
+        .legend-subitem {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 2px 0;
+        }
+
+        .legend-icon-badge {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.68rem;
+            flex-shrink: 0;
+        }
+
+        .legend-icon-badge.bg-mountain {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .legend-icon-badge.bg-anchor {
+            background: var(--sky-100);
+            color: var(--sky-600);
+        }
+
+        .legend-icon-badge.bg-water {
+            background: #ccfbf1;
+            color: #0f766e;
+        }
+
+        .legend-icon-badge.bg-tag {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .legend-line-sample {
+            display: inline-block;
+            width: 24px;
+            flex-shrink: 0;
+        }
+
+        .legend-line-sample.solid-prov {
+            height: 3px;
+            background: #ef4444;
+            border-radius: 2px;
+        }
+
+        .legend-line-sample.dashed-kab {
+            border-top: 2px dashed #ef4444;
+        }
+
+        .legend-line-sample.dotted-lain {
+            border-top: 1.5px dotted #ef4444;
+        }
+
+        .legend-swatch {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+
+        /* Scale Bar Sky Blue */
+        .leaflet-control-scale-line {
+            background: rgba(255, 255, 255, 0.92) !important;
+            border: 1.5px solid var(--sky-600) !important;
+            border-top: none !important;
+            color: var(--sky-900) !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 10px !important;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.15);
         }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <!-- Navbar Minimalis Sky Blue -->
+    <nav class="navbar navbar-expand-lg navbar-sky">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Flores Timur</a>
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-compass text-primary" style="color: var(--sky-600) !important;"></i>
+                <span>Flores Timur</span>
+                <span class="badge-sky-sm">WebGIS</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto gap-1">
                     <li class="nav-item">
-                        <a class="nav-link" href="https://sv.ugm.ac.id/" target="_blank"><i
-                                class="bi bi-box-arrow-up-right"></i> SV UGM</a>
+                        <a class="nav-link" href="https://sv.ugm.ac.id/" target="_blank">
+                            <i class="bi bi-box-arrow-up-right"></i> SV UGM
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal"><i
-                                class="bi bi-info-circle"></i> About</a>
+                        <a class="nav-link btn-nav-about" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                            <i class="bi bi-info-circle-fill"></i> About
+                        </a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+
     <div id="map"></div>
 
-    <!-- Modal About - Avengers Initiative Theme -->
+    <!-- Modal About - Tema Sky Blue Sederhana & Minimalis -->
     <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content avengers-modal">
-                <div class="modal-header avengers-header">
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="avengers-logo-glow">
-                            <svg class="avengers-icon" viewBox="0 0 100 100" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="50" cy="50" r="46" stroke="#00f0ff" stroke-width="4" stroke-dasharray="8 4"
-                                    class="rotating-ring" />
-                                <circle cx="50" cy="50" r="40" stroke="#e23636" stroke-width="3"
-                                    fill="rgba(10, 15, 30, 0.8)" />
-                                <path
-                                    d="M52 18 L66 18 L79 78 L67 78 L62 56 L39 56 L35 72 L44 72 L41 80 L22 80 L25 72 L33 72 L48 24 L37 24 L39 18 L52 18 Z M43 46 L60 46 L53 28 L43 46 Z"
-                                    fill="#ffffff" filter="drop-shadow(0 0 6px #00f0ff)" />
-                                <polygon points="56,46 76,46 74,54 54,54" fill="#00f0ff" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h5 class="modal-title avengers-title" id="aboutModalLabel">AVENGERS</h5>
-                            <span class="avengers-subtitle">S.H.I.E.L.D. PERSONNEL CLASSIFIED DOSSIER</span>
-                        </div>
+            <div class="modal-content sky-modal">
+                <div class="modal-header sky-modal-header">
+                    <div>
+                        <h5 class="modal-title sky-modal-title" id="aboutModalLabel">
+                            <i class="bi bi-person-badge-fill me-2"></i>Tentang Pembuat
+                        </h5>
+                        <span class="sky-modal-subtitle">Praktikum Pemrograman Spasial: Web (Acara 6)</span>
                     </div>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <div class="modal-body avengers-body">
-                    <!-- Clearance & Status -->
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="badge-clearance"><i class="bi bi-shield-shaded me-1"></i> CLEARANCE: LEVEL 8</span>
-                        <span class="badge-status"><span class="pulse-dot"></span> ACTIVE OPERATIVE</span>
+                <div class="modal-body sky-modal-body">
+                    <!-- Profile Card -->
+                    <div class="sky-profile-card">
+                        <div class="sky-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="sky-profile-name">Sarah Tiara Ilyas</h5>
+                            <span class="sky-badge-pill">
+                                <i class="bi bi-card-text me-1"></i> NIM: 25/568177/SV/27381
+                            </span>
+                        </div>
                     </div>
 
-                    <!-- Dossier Agent Card -->
-                    <div class="agent-card">
-                        <div class="row g-3 align-items-center">
-                            <div class="col-sm-4 text-center">
-                                <div class="agent-avatar-wrap">
-                                    <div class="arc-reactor-core">
-                                        <i class="bi bi-person-bounding-box text-cyan" style="font-size: 2.8rem;"></i>
-                                    </div>
-                                    <div class="agent-id-tag">OPERATIVE #27381</div>
-                                </div>
+                    <!-- Info Grid -->
+                    <div class="sky-info-grid">
+                        <div class="sky-info-item">
+                            <div class="sky-info-label">
+                                <i class="bi bi-mortarboard-fill" style="color: var(--sky-600);"></i> Kelas
                             </div>
-                            <div class="col-sm-8">
-                                <div class="agent-field">
-                                    <div class="field-label">AGENT NAME</div>
-                                    <div class="field-value">Sarah Tiara Ilyas</div>
-                                </div>
-                                <div class="agent-field">
-                                    <div class="field-label">OPERATIVE NIM / ID</div>
-                                    <div class="field-value text-gold">25/568177/SV/27381</div>
-                                </div>
-                                <div class="agent-field">
-                                    <div class="field-label">DIVISION / CLASS</div>
-                                    <div class="field-value">Kelas B <span class="division-tag">// Geospatial
-                                            Intel</span></div>
-                                </div>
+                            <div class="sky-info-value">Kelas B</div>
+                        </div>
+                        <div class="sky-info-item">
+                            <div class="sky-info-label">
+                                <i class="bi bi-geo-fill" style="color: var(--sky-600);"></i> Wilayah Kajian
+                            </div>
+                            <div class="sky-info-value">Kab. Flores Timur</div>
+                        </div>
+                        <div class="sky-info-item full-width">
+                            <div class="sky-info-label">
+                                <i class="bi bi-building" style="color: var(--sky-600);"></i> Program Studi & Institusi
+                            </div>
+                            <div class="sky-info-value">
+                                Sarjana Terapan Sistem Informasi Geografis<br>
+                                <span class="text-muted fw-normal" style="font-size: 0.82rem;">Sekolah Vokasi, Universitas Gadjah Mada</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tech HUD Details -->
-                    <div class="tech-hud mt-3">
-                        <div class="d-flex justify-content-between small text-muted-glow">
-                            <span>AFFILIATION: <strong>EARTH'S MIGHTIEST HEROES</strong></span>
-                            <span>STATUS: <strong>AUTHORIZED</strong></span>
+                    <!-- Tech Stack Wrap -->
+                    <div class="sky-tech-wrap">
+                        <div class="sky-info-label" style="margin-bottom: 2px;">
+                            <i class="bi bi-code-slash" style="color: var(--sky-600);"></i> Teknologi & Sumber Data
                         </div>
-                        <div class="hud-progress mt-1">
-                            <div class="hud-bar" style="width: 100%;"></div>
+                        <div class="sky-tech-pills">
+                            <span class="sky-pill"><i class="bi bi-layers me-1"></i>Leaflet JS</span>
+                            <span class="sky-pill"><i class="bi bi-file-earmark-code me-1"></i>GeoJSON</span>
+                            <span class="sky-pill"><i class="bi bi-bootstrap me-1"></i>Bootstrap 5</span>
+                            <span class="sky-pill"><i class="bi bi-map me-1"></i>OpenStreetMap</span>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer avengers-footer">
-                    <span class="footer-note"><i class="bi bi-cpu me-1"></i> STARK INDUSTRIES SECURE PROTOCOL</span>
-                    <button type="button" class="btn btn-avengers-close" data-bs-dismiss="modal">
-                        <i class="bi bi-x-octagon me-1"></i> STAND DOWN
+                <div class="modal-footer sky-modal-footer">
+                    <span class="small text-muted">
+                        <i class="bi bi-geo-alt-fill me-1" style="color: var(--sky-600);"></i>Flores Timur WebGIS &copy; 2025
+                    </span>
+                    <button type="button" class="btn btn-sky-primary" data-bs-dismiss="modal">
+                        Tutup
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Jumlah Penduduk -->
+    <!-- Modal Informasi Penduduk - Tema Sky Blue Sederhana & Minimalis -->
     <div class="modal fade" id="pendudukModal" tabindex="-1" aria-labelledby="pendudukModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fs-5" id="pendudukModalTitle">
-                        <i class="bi bi-people-fill me-2"></i>Informasi Penduduk
-                    </h5>
+            <div class="modal-content sky-modal">
+                <div class="modal-header sky-modal-header">
+                    <div>
+                        <h5 class="modal-title sky-modal-title" id="pendudukModalTitle">
+                            <i class="bi bi-geo-alt-fill me-2"></i>Informasi Penduduk
+                        </h5>
+                        <span class="sky-modal-subtitle">Data Demografi per Kecamatan</span>
+                    </div>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="pendudukModalBody">
+                <div class="modal-body p-0" id="pendudukModalBody">
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <div class="modal-footer sky-modal-footer">
+                    <span class="small text-muted">Kabupaten Flores Timur</span>
+                    <button type="button" class="btn btn-sky-primary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -462,10 +802,15 @@
         map.createPane('jalan');
         map.getPane('jalan').style.zIndex = 400;
 
-        // Tile Layer Base Map
+        // Tile Layer Base Maps
         var basemap = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             attribution:
                 '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        });
+
+        var imagery = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+            attribution:
+                'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
         });
 
         // Menambahkan basemap ke dalam peta
@@ -514,30 +859,45 @@
             },
             // onEachFeature
             onEachFeature: function (feature, layer) {
-                // variable popup content
-                var imgTag = feature.properties.image ? "<br><img src='images/" + feature.properties.image + "' alt='' width='200'>" : "";
-                var popup_content = "Nama: " + feature.properties.TOPONIMI + "<br>" +
-                    "Kategori: " + (feature.properties.NAMA_UNSUR || "-") + "<br>" +
-                    "Koordinat: " + feature.geometry.coordinates[1] + ", " + feature.geometry.coordinates[0] +
-                    imgTag;
+                var coords = feature.geometry.coordinates;
+                var coordsFormatted = Number(coords[1]).toFixed(5) + ", " + Number(coords[0]).toFixed(5);
+                var imgTag = feature.properties.image
+                    ? "<div class='sky-popup-img-wrap'><img src='images/" + feature.properties.image + "' alt='" + feature.properties.TOPONIMI + "' class='sky-popup-img'></div>"
+                    : "";
 
-                layer.on({
-                    click: function (e) {
-                        toponimi.bindPopup(popup_content);
-                    },
-                    mouseover: function (e) {
-                        toponimi.bindTooltip(feature.properties.TOPONIMI, {
-                            direction: "left",
-                            sticky: true,
-                        });
-                    },
+                var popup_content = "<div class='sky-popup'>" +
+                    "<div class='sky-popup-header'>" +
+                    "  <i class='fa-solid fa-map-pin me-2'></i><span>Detail Toponimi</span>" +
+                    "</div>" +
+                    "<div class='sky-popup-body'>" +
+                    "  <div class='sky-popup-title'>" + (feature.properties.TOPONIMI || 'Tanpa Nama') + "</div>" +
+                    "  <div class='sky-popup-row'>" +
+                    "    <span class='sky-popup-label'><i class='bi bi-tag-fill me-1 text-primary' style='color: var(--sky-600) !important;'></i>Kategori</span>" +
+                    "    <span class='badge-sky'>" + (feature.properties.NAMA_UNSUR || '-') + "</span>" +
+                    "  </div>" +
+                    "  <div class='sky-popup-row'>" +
+                    "    <span class='sky-popup-label'><i class='bi bi-crosshair me-1 text-primary' style='color: var(--sky-600) !important;'></i>Koordinat</span>" +
+                    "    <span class='sky-popup-coord'>" + coordsFormatted + "</span>" +
+                    "  </div>" +
+                    imgTag +
+                    "</div>" +
+                    "</div>";
+
+                layer.bindPopup(popup_content);
+
+                layer.bindTooltip(feature.properties.TOPONIMI || "Toponimi", {
+                    direction: "top",
+                    offset: [0, -28],
+                    sticky: false
                 });
             },
         });
+
         $.getJSON("geojson/toponimi.geojson", function (data) {
-            toponimi.addData(data); // Menambahkan data ke dalam GeoJSON Point toponimi
-            map.addLayer(toponimi); // Menambahkan GeoJSON Point toponimi ke dalam peta
+            toponimi.addData(data);
+            map.addLayer(toponimi);
         });
+
         // GeoJSON Polyline Jalan
         var jalan = L.geoJSON(null, {
             pane: "jalan",
@@ -546,142 +906,151 @@
                 var unsur = feature.properties.NAMA_UNSUR || "";
                 if (unsur === "Jalan Propinsi" || unsur === "Jalan Provinsi") {
                     return {
-                        color: "red",
+                        color: "#ef4444",
                         weight: 3,
                         opacity: 1,
                     };
                 } else if (unsur === "Jalan Kabupaten") {
                     return {
-                        color: "red",
+                        color: "#ef4444",
                         weight: 1.5,
-                        dashArray: "10, 8", // garis putus-putus panjang
+                        dashArray: "10, 8",
                         opacity: 1,
                     };
                 } else {
                     return {
-                        color: "red",
-                        weight: 0.5,
-                        dashArray: "3, 5", // garis putus-putus pendek
+                        color: "#ef4444",
+                        weight: 0.8,
+                        dashArray: "3, 5",
                         opacity: 1,
                     };
                 }
             },
             // onEachFeature
             onEachFeature: function (feature, layer) {
-                // variable popup content
-                var popup_content = "Fungsi: " + feature.properties.NAMA_UNSUR + "<br>" +
-                    "Panjang (km): " + feature.properties.panjang_km;
+                var popup_content = "<div class='sky-popup'>" +
+                    "<div class='sky-popup-header'>" +
+                    "  <i class='fa-solid fa-route me-2'></i><span>Detail Ruas Jalan</span>" +
+                    "</div>" +
+                    "<div class='sky-popup-body'>" +
+                    "  <div class='sky-popup-title'>" + (feature.properties.NAMA_UNSUR || 'Ruas Jalan') + "</div>" +
+                    "  <div class='sky-popup-row'>" +
+                    "    <span class='sky-popup-label'><i class='bi bi-diagram-3 me-1 text-primary' style='color: var(--sky-600) !important;'></i>Fungsi</span>" +
+                    "    <span class='badge-sky'>" + (feature.properties.NAMA_UNSUR || '-') + "</span>" +
+                    "  </div>" +
+                    "  <div class='sky-popup-row'>" +
+                    "    <span class='sky-popup-label'><i class='bi bi-rulers me-1 text-primary' style='color: var(--sky-600) !important;'></i>Panjang</span>" +
+                    "    <span class='sky-popup-val-bold'>" + (feature.properties.panjang_km || 0) + " km</span>" +
+                    "  </div>" +
+                    "</div>" +
+                    "</div>";
 
-                layer.on({
-                    click: function (e) {
-                        jalan.bindPopup(popup_content);
-                    },
-                    mouseover: function (e) {
-                        jalan.bindTooltip(feature.properties.NAMA_UNSUR, {
-                            direction: "auto",
-                            sticky: true,
-                        });
-                    },
+                layer.bindPopup(popup_content);
+
+                layer.bindTooltip(feature.properties.NAMA_UNSUR, {
+                    direction: "auto",
+                    sticky: true,
                 });
             },
-
         });
+
         $.getJSON("geojson/jalan.geojson", function (data) {
-            jalan.addData(data); // Menambahkan data ke dalam GeoJSON Polyline Jalan
-            map.addLayer(jalan); // Menambahkan GeoJSON Polyline Jalan ke dalam peta
+            jalan.addData(data);
+            map.addLayer(jalan);
         });
 
         // GeoJSON Polygon Jumlah Penduduk
         var jumlah_penduduk = L.geoJSON(null, {
             pane: "jumlah_penduduk",
-            // Style
+            // Style gradasi biru muda ke biru tua sesuai jumlah penduduk
             style: function (feature) {
-                if (feature.properties.Penduduk <= 12000) {
+                var jml = feature.properties.Penduduk;
+                if (jml <= 12000) {
                     return {
                         opacity: 1,
-                        color: 'black',
-                        weight: 1.0,
-                        fillOpacity: 0.7,
-                        fillColor: '#ffffb2'
-                    }
-                }
-                if (feature.properties.Penduduk > 12000 && feature.properties.Penduduk <= 24000) {
+                        color: '#ffffff',
+                        weight: 1.2,
+                        fillOpacity: 0.75,
+                        fillColor: '#bae6fd' // Biru muda (penduduk relatif sedikit)
+                    };
+                } else if (jml > 12000 && jml <= 24000) {
                     return {
                         opacity: 1,
-                        color: 'black',
-                        weight: 1.0,
-                        fillOpacity: 0.7,
-                        fillColor: '#fd8d3c'
-                    }
-                }
-                if (feature.properties.Penduduk > 24000) {
+                        color: '#ffffff',
+                        weight: 1.2,
+                        fillOpacity: 0.75,
+                        fillColor: '#0284c7' // Biru sedang
+                    };
+                } else {
                     return {
                         opacity: 1,
-                        color: 'black',
-                        weight: 1.0,
-                        fillOpacity: 0.7,
-                        fillColor: '#bd0026'
-                    }
+                        color: '#ffffff',
+                        weight: 1.2,
+                        fillOpacity: 0.75,
+                        fillColor: '#0c4a6e' // Biru tua (penduduk terbanyak)
+                    };
                 }
             },
             // onEachFeature
             onEachFeature: function (feature, layer) {
+                var props = feature.properties;
+                var kepadatan = (props.Penduduk && props.luas_km2) ? (props.Penduduk / props.luas_km2).toFixed(1) + " Jiwa/km&sup2;" : "-";
+                var content = "<table class='table sky-table my-0'>" +
+                    "<tr><th style='width: 42%;'><i class='bi bi-geo-alt me-1' style='color: var(--sky-600);'></i>Kecamatan</th><td><strong>" + (props.WADMKC || '-') + "</strong></td></tr>" +
+                    "<tr><th><i class='bi bi-building me-1' style='color: var(--sky-600);'></i>Kabupaten</th><td>" + (props.WADMKK || 'Flores Timur') + "</td></tr>" +
+                    "<tr><th><i class='bi bi-map me-1' style='color: var(--sky-600);'></i>Provinsi</th><td>" + (props.WADMPR || 'Nusa Tenggara Timur') + "</td></tr>" +
+                    "<tr><th><i class='bi bi-people-fill me-1' style='color: var(--sky-600);'></i>Jumlah Penduduk</th><td><span class='badge-sky-lg'>" + Number(props.Penduduk).toLocaleString('id-ID') + " Jiwa</span></td></tr>" +
+                    (props.luas_km2 ? "<tr><th><i class='bi bi-bounding-box me-1' style='color: var(--sky-600);'></i>Luas Wilayah</th><td>" + Number(props.luas_km2).toFixed(2) + " km&sup2;</td></tr>" : "") +
+                    "<tr><th><i class='bi bi-speedometer2 me-1' style='color: var(--sky-600);'></i>Kepadatan</th><td>" + kepadatan + "</td></tr>" +
+                    "</table>";
+
                 layer.on({
                     click: function (e) {
-                        var props = feature.properties;
-                        var content = "<table class='table table-striped table-bordered my-0'>" +
-                            "<tr><th style='width: 40%;'>Kecamatan</th><td>" + (props.WADMKC || '-') + "</td></tr>" +
-                            "<tr><th>Kabupaten</th><td>" + (props.WADMKK || 'Flores Timur') + "</td></tr>" +
-                            "<tr><th>Provinsi</th><td>" + (props.WADMPR || 'Nusa Tenggara Timur') + "</td></tr>" +
-                            "<tr><th>Jumlah Penduduk</th><td><strong class='text-primary'>" + Number(props.Penduduk).toLocaleString('id-ID') + " Jiwa</strong></td></tr>" +
-                            (props.luas_km2 ? "<tr><th>Luas Wilayah</th><td>" + Number(props.luas_km2).toFixed(2) + " km&sup2;</td></tr>" : "") +
-                            "</table>";
-
-                        document.getElementById("pendudukModalTitle").innerHTML = "<i class='bi bi-geo-alt-fill text-danger me-2'></i>Kecamatan " + (props.WADMKC || '');
+                        document.getElementById("pendudukModalTitle").innerHTML = "<i class='bi bi-geo-alt-fill me-2'></i>Kecamatan " + (props.WADMKC || '');
                         document.getElementById("pendudukModalBody").innerHTML = content;
                         var pendudukModal = bootstrap.Modal.getOrCreateInstance(document.getElementById("pendudukModal"));
                         pendudukModal.show();
-                    },
-                    mouseover: function (e) {
-                        jumlah_penduduk.bindTooltip(feature.properties.WADMKC, {
-                            direction: "auto",
-                            sticky: true,
-                        });
-                    },
+                    }
+                });
+
+                layer.bindTooltip(feature.properties.WADMKC, {
+                    direction: "auto",
+                    sticky: true,
                 });
             },
         });
+
         $.getJSON("geojson/jml_penduduk.geojson", function (data) {
-            jumlah_penduduk.addData(data); // Menambahkan data ke dalam GeoJSON Polygon Jumlah Penduduk
-            map.addLayer(jumlah_penduduk); // Menambahkan GeoJSON Polygon Jumlah Penduduk ke dalam peta
+            jumlah_penduduk.addData(data);
+            map.addLayer(jumlah_penduduk);
         });
 
         // Control Layer
         var baseMaps = {
             "OpenStreetMap": basemap,
-
+            "Satellite Imagery (Esri)": imagery,
         };
 
-        var jalanLabel = "Jalan<br>" +
-            "<div style='margin-left: 20px; font-size: 12px; line-height: 18px; margin-top: 4px;'>" +
-            "<svg width='24' height='6' style='vertical-align: middle; margin-right: 6px;'><line x1='0' y1='3' x2='24' y2='3' stroke='red' stroke-width='3'/></svg> Jalan Provinsi<br>" +
-            "<svg width='24' height='6' style='vertical-align: middle; margin-right: 6px;'><line x1='0' y1='3' x2='24' y2='3' stroke='red' stroke-width='1.5' stroke-dasharray='6,3'/></svg> Jalan Kabupaten<br>" +
-            "<svg width='24' height='6' style='vertical-align: middle; margin-right: 6px;'><line x1='0' y1='3' x2='24' y2='3' stroke='red' stroke-width='0.8' stroke-dasharray='2,2'/></svg> Jalan Lain" +
+        var toponimiLabel = "<div class='legend-title-item'><i class='bi bi-geo-alt-fill me-1' style='color: var(--sky-600);'></i>Toponimi</div>" +
+            "<div class='legend-sublist'>" +
+            "  <div class='legend-subitem'><span class='legend-icon-badge bg-mountain'><i class='fa-solid fa-mountain'></i></span> Gunung</div>" +
+            "  <div class='legend-subitem'><span class='legend-icon-badge bg-anchor'><i class='fa-solid fa-anchor'></i></span> Tanjung</div>" +
+            "  <div class='legend-subitem'><span class='legend-icon-badge bg-water'><i class='fa-solid fa-water'></i></span> Teluk</div>" +
+            "  <div class='legend-subitem'><span class='legend-icon-badge bg-tag'><i class='fa-solid fa-tag'></i></span> Toponimi Lain</div>" +
             "</div>";
 
-        var jmlPendudukLabel = "Jumlah Penduduk<br>" +
-            "<div style='margin-left: 20px; font-size: 12px; line-height: 18px; margin-top: 4px;'>" +
-            "<span style='display: inline-block; width: 14px; height: 14px; background-color: #ffffb2; border: 1px solid #000; vertical-align: middle; margin-right: 6px;'></span> &le; 12.000<br>" +
-            "<span style='display: inline-block; width: 14px; height: 14px; background-color: #fd8d3c; border: 1px solid #000; vertical-align: middle; margin-right: 6px;'></span> 12.001 - 24.000<br>" +
-            "<span style='display: inline-block; width: 14px; height: 14px; background-color: #bd0026; border: 1px solid #000; vertical-align: middle; margin-right: 6px;'></span> &gt; 24.000" +
+        var jalanLabel = "<div class='legend-title-item'><i class='bi bi-signpost-2-fill me-1' style='color: var(--sky-600);'></i>Jaringan Jalan</div>" +
+            "<div class='legend-sublist'>" +
+            "  <div class='legend-subitem'><span class='legend-line-sample solid-prov'></span> Jalan Provinsi</div>" +
+            "  <div class='legend-subitem'><span class='legend-line-sample dashed-kab'></span> Jalan Kabupaten</div>" +
+            "  <div class='legend-subitem'><span class='legend-line-sample dotted-lain'></span> Jalan Lain</div>" +
             "</div>";
 
-        var toponimiLabel = "Toponimi<br>" +
-            "<div style='margin-left: 20px; font-size: 12px; line-height: 18px; margin-top: 4px;'>" +
-            "<i class='fa-solid fa-mountain' style='color: darkred; margin-right: 6px;'></i> Gunung<br>" +
-            "<i class='fa-solid fa-anchor' style='color: #0078A8; margin-right: 6px;'></i> Tanjung<br>" +
-            "<i class='fa-solid fa-water' style='color: cadetblue; margin-right: 6px;'></i> Teluk<br>" +
-            "<i class='fa-solid fa-tag' style='color: green; margin-right: 6px;'></i> Toponimi Lain" +
+        var jmlPendudukLabel = "<div class='legend-title-item'><i class='bi bi-people-fill me-1' style='color: var(--sky-600);'></i>Jumlah Penduduk</div>" +
+            "<div class='legend-sublist'>" +
+            "  <div class='legend-subitem'><span class='legend-swatch' style='background-color: #bae6fd;'></span> &le; 12.000 Jiwa (Rendah)</div>" +
+            "  <div class='legend-subitem'><span class='legend-swatch' style='background-color: #0284c7;'></span> 12.001 - 24.000 Jiwa (Sedang)</div>" +
+            "  <div class='legend-subitem'><span class='legend-swatch' style='background-color: #0c4a6e;'></span> &gt; 24.000 Jiwa (Tinggi)</div>" +
             "</div>";
 
         var overlayMaps = {};
@@ -692,7 +1061,16 @@
         var controllayer = L.control.layers(baseMaps, overlayMaps, { collapsed: false });
         controllayer.addTo(map);
 
-        // Scale Bar
+        // Menambahkan Header Minimalis pada Legenda Control
+        var legendHeader = L.DomUtil.create("div", "legend-header-bar");
+        legendHeader.innerHTML = "<div class='d-flex align-items-center justify-content-between'>" +
+            "  <span class='fw-bold text-sky-dark'><i class='bi bi-layers-half me-1' style='color: var(--sky-600);'></i>LEGENDA PETA</span>" +
+            "  <span class='legend-badge-count'>3 Layer</span>" +
+            "</div>";
+        var controlDiv = controllayer.getContainer();
+        controlDiv.insertBefore(legendHeader, controlDiv.firstChild);
+
+        // Scale Bar Minimalis
         L.control.scale({
             position: "bottomleft",
             metric: true,
@@ -701,4 +1079,4 @@
     </script>
 </body>
 
-</html>
+</html>

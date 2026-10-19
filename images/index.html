@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Leaflet JS</title>
+		<title>Leaflet JS - Satellite Imagery</title>
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 		<style>
 			html, body, #map {
 				width: 100%;
 				height: 100%;
-                margin:0;
+				margin: 0;
 			}
 		</style>
 	</head>
@@ -19,16 +19,30 @@
 		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 		<script>
 			// Inisialisasi peta
-			var map = L.map("map").setView([-8.3255701,123.1567383], 11);
+			var map = L.map("map").setView([-8.3255701, 123.1567383], 11);
 
-			// Tile Layer Base Map
-			var basemap = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+			// Tile Layer Imagery (Esri World Imagery)
+			var imagery = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+				attribution:
+					'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+			});
+
+			// Tile Layer OpenStreetMap
+			var osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 				attribution:
 					'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 			});
 
-			// Menambahkan basemap ke dalam peta
-			basemap.addTo(map);
+			// Menambahkan imagery sebagai basemap aktif ke dalam peta
+			imagery.addTo(map);
+
+			// Pilihan Basemap
+			var baseMaps = {
+				"Satellite Imagery (Esri)": imagery,
+				"OpenStreetMap": osm
+			};
+
+			L.control.layers(baseMaps).addTo(map);
 		</script>
 	</body>
-</html>
+</html>
